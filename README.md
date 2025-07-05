@@ -13,7 +13,7 @@ This is a full-stack web application that detects the language of user input and
 
 - Detects the input language using `langdetect`
 - Converts language names to ISO 639-1 codes using `pycountry`
-- Translates using `googletrans`
+- Translates using `deep-translator`
 - Dynamically loads language list on the frontend using `iso-639-1` via Skypack CDN
 - Backend and frontend are served together via Flask
 
