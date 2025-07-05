@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from langdetect import detect
 from googletrans import Translator
@@ -17,7 +17,9 @@ def get_lang_code(name):
 async def translate_text(input_text, src_lang, dest_lang):
     result = await translator.translate(input_text, src=src_lang, dest=dest_lang)
     return result.text
-
+@app.get("/")
+def home():
+    return render_template("index.html")
 @app.route("/translate", methods=["POST"])
 def translate_route():
     data = request.get_json()
