@@ -81,7 +81,7 @@ You can deploy it to:
 - Improve fuzzy matching for misspelled languages
 - Add dark mode and animations
 ✨ Live Demo
-🔗 Demo Link (Replace with actual)
+🔗 Demo Link
 
 🧑‍💻 Author
 Made For Fun by Sanjoli Vashisth
