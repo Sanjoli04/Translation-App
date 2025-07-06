@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Smart Translator</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- ISO 639-1 Language Library -->
-  <script src="https://cdn.jsdelivr.net/npm/iso-639-1@2.1.13/dist/iso-639-1.min.js"></script>
 </head>
 <body class="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen flex items-center justify-center p-6">
 
@@ -15,36 +14,55 @@
     </h1>
 
     <form id="translate-form" class="space-y-6">
-      <textarea id="text-input" class="w-full p-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition" rows="4" placeholder="Type something to translate..."></textarea>
+      <textarea
+        id="text-input"
+        class="w-full p-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+        rows="4"
+        placeholder="Type something to translate..."></textarea>
 
-      <select id="language-select" class="w-full p-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition">
+      <select
+        id="language-select"
+        class="w-full p-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition">
         <option value="">Loading languages...</option>
       </select>
 
-      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold shadow-md transition duration-300">
+      <button
+        type="submit"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold shadow-md transition duration-300">
         🔁 Translate
       </button>
     </form>
 
-    <div id="output" class="mt-6 text-xl font-medium text-center text-gray-800 break-words min-h-[2rem]"></div>
+    <div
+      id="output"
+      class="mt-6 text-xl font-medium text-center text-gray-800 break-words min-h-[2rem]">
+    </div>
   </div>
 
   <script>
     const select = document.getElementById('language-select');
     const outputDiv = document.getElementById('output');
 
-    // Populate dropdown with languages
-    const codes = ISO6391.getLanguages();
-    select.innerHTML = '<option value="">Select a language</option>';
-    codes.forEach(code => {
-      const name = ISO6391.getName(code);
-      const option = document.createElement('option');
-      option.value = code;
-      option.textContent = name;
-      select.appendChild(option);
-    });
+    async function loadLanguages() {
+      try {
+        const res = await fetch('/languages');
+        const data = await res.json();
 
-    // Handle form submission
+        select.innerHTML = '<option value="">Select a language</option>';
+        data.forEach(({ code, name }) => {
+          const option = document.createElement('option');
+          option.value = code;
+          option.textContent = name;
+          select.appendChild(option);
+        });
+      } catch (err) {
+        select.innerHTML = '<option value="">⚠️ Failed to load languages</option>';
+        console.error("Language fetch error:", err);
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", loadLanguages);
+
     document.getElementById('translate-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const text = document.getElementById('text-input').value.trim();
