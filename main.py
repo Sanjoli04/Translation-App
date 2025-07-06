@@ -12,10 +12,10 @@ def get_lang_code(name):
     return lang.alpha_2 if lang and hasattr(lang, "alpha_2") else None
 
 @app.route("/languages")
-def languages():
+def langs():
     codes = [
         {"code": lang.alpha_2, "name": lang.name}
-        for lang in pycountry.languages
+        for lang in languages
         if hasattr(lang, "alpha_2")
     ]
     return jsonify(sorted(codes, key=lambda x: x["name"]))
