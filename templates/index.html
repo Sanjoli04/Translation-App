@@ -4,35 +4,36 @@
   <meta charset="UTF-8" />
   <title>Smart Translator</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ISO 639-1 Language Library -->
+  <script src="https://cdn.jsdelivr.net/npm/iso-639-1@2.1.13/dist/iso-639-1.min.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen flex items-center justify-center p-6">
 
-  <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-xl">
-    <h1 class="text-2xl font-bold text-center mb-6">🌍 Translate Something</h1>
+  <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-xl transition-transform hover:scale-[1.02] duration-300 ease-in-out">
+    <h1 class="text-3xl font-extrabold text-center text-blue-700 flex items-center justify-center mb-8">
+      🌍 <span class="ml-2">Smart Translator</span>
+    </h1>
 
-    <form id="translate-form" class="space-y-4">
-      <textarea id="text-input" class="w-full p-3 border rounded-lg" rows="4" placeholder="Enter your text..."></textarea>
+    <form id="translate-form" class="space-y-6">
+      <textarea id="text-input" class="w-full p-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition" rows="4" placeholder="Type something to translate..."></textarea>
 
-      <select id="language-select" class="w-full p-3 border rounded-lg">
+      <select id="language-select" class="w-full p-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition">
         <option value="">Loading languages...</option>
       </select>
 
-      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold">
-        Translate
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold shadow-md transition duration-300">
+        🔁 Translate
       </button>
     </form>
 
-    <div id="output" class="mt-6 text-lg font-medium text-gray-800"></div>
+    <div id="output" class="mt-6 text-xl font-medium text-center text-gray-800 break-words min-h-[2rem]"></div>
   </div>
 
-  <!-- Load ISO 639-1 JS from Skypack -->
-  <script type="module">
-    import ISO6391 from 'https://cdn.skypack.dev/iso-639-1';
-
+  <script>
     const select = document.getElementById('language-select');
     const outputDiv = document.getElementById('output');
 
-    // Populate dropdown
+    // Populate dropdown with languages
     const codes = ISO6391.getLanguages();
     select.innerHTML = '<option value="">Select a language</option>';
     codes.forEach(code => {
@@ -43,29 +44,30 @@
       select.appendChild(option);
     });
 
-    // Form submit handler
+    // Handle form submission
     document.getElementById('translate-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const text = document.getElementById('text-input').value.trim();
       const target_lang = select.value;
 
       if (!text || !target_lang) {
-        outputDiv.textContent = "Please enter text and select a language.";
+        outputDiv.textContent = "⚠️ Please enter text and select a language.";
         return;
       }
 
+      outputDiv.textContent = "🔄 Translating...";
+
       try {
-        const res = await fetch('https://translation-app-0yg9.onrender.com/translate', {
+        const res = await fetch('/translate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text, target_lang })
         });
 
         const data = await res.json();
-        outputDiv.textContent = data.translated_text || "Translation failed.";
+        outputDiv.textContent = data.translated_text || "⚠️ Translation failed.";
       } catch (err) {
-        outputDiv.textContent = "Server error. Try again.";
+        outputDiv.textContent = "❌ Server error. Try again.";
         console.error(err);
       }
     });
