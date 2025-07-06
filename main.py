@@ -11,6 +11,15 @@ def get_lang_code(name):
     lang = languages.get(name=name.lower())
     return lang.alpha_2 if lang and hasattr(lang, "alpha_2") else None
 
+@app.route("/languages")
+def languages():
+    codes = [
+        {"code": lang.alpha_2, "name": lang.name}
+        for lang in pycountry.languages
+        if hasattr(lang, "alpha_2")
+    ]
+    return jsonify(sorted(codes, key=lambda x: x["name"]))
+
 @app.route("/translate", methods=["POST"])
 def translate_route():
     data = request.get_json()
